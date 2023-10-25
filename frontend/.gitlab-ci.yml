@@ -1,0 +1,11 @@
+stages:
+  - triage
+  - ai-code-review
+
+run:triage:triage:
+  stage: triage
+  script:
+    - gem install gitlab-triage
+    - gitlab-triage --token $GITLAB_API_TOKEN --source-id $CI_PROJECT_PATH
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
