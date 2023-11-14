@@ -1,7 +1,14 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import { AppRoute } from 'AppRoute';
+import { Home } from 'views-forRouter/home/Home';
+
 export const App = () => {
   return (
-    <main className="intro">
-      <h1>Mentoring frontend start</h1>
-    </main>
+    <Router>
+      <Routes>
+        <Route path={AppRoute.home} element={<Home />} />
+      </Routes>
+    </Router>
   );
 };

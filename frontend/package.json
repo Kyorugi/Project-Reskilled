@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
+    "dev": "npm run start",
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
@@ -29,6 +30,11 @@
     ]
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/material": "^5.14.17",
     "@types/node": "^18.14.0",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
@@ -57,7 +63,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-testing-library": "^5.10.2",
-    "prettier": "^2.8.4",
-    "husky": "^7.0.0"
+    "husky": "^8.0.3",
+    "prettier": "^2.8.4"
   }
 }
