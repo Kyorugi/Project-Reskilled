@@ -38,6 +38,7 @@ module.exports = {
     'build',
   ],
   rules: {
+    'react/no-unescaped-entities': 'off',
     'react/button-has-type': 'off',
     'react/no-unused-prop-types': 'warn',
     'react/require-default-props': 'off',
