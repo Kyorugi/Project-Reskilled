@@ -18,6 +18,7 @@ export const Home = () => {
             to={AppRoute.home}
             variant="contained"
             size="large"
+            style={{ backgroundColor: '#009688' }}
           >
             Sign In
           </Button>
@@ -26,10 +27,14 @@ export const Home = () => {
             to={AppRoute.home}
             variant="contained"
             size="large"
+            style={{ backgroundColor: '#009688' }}
           >
             Sign up
           </Button>
         </Box>
+        <Typography variant="h5">
+          We're looking for specliasists in those technologies:
+        </Typography>
       </Paper>
     </Box>
   );

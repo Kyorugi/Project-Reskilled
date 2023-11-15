@@ -1,4 +1,4 @@
-import { SxProps, Theme } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 
 export const layout: SxProps<Theme> = {
   minHeight: '100vh',
@@ -13,8 +13,10 @@ export const container: SxProps<Theme> = {
 
 export const buttonsContainer: SxProps<Theme> = {
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
   alignItems: 'center',
   marginTop: 7,
+  marginBottom: 5,
   rowGap: 2,
+  gap: 5,
 };
