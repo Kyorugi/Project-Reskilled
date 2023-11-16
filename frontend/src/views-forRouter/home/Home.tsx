@@ -4,6 +4,7 @@ import { Box, Button, Paper, Typography } from '@mui/material';
 import { AppRoute } from 'AppRoute';
 
 import * as styles from './Home.style';
+import { JobsList } from './JobsLists';
 
 export const Home = () => {
   return (
@@ -35,6 +36,7 @@ export const Home = () => {
         <Typography variant="h5">
           We're looking for specliasists in those technologies:
         </Typography>
+        <JobsList />
       </Paper>
     </Box>
   );
