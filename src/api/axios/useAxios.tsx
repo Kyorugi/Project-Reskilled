@@ -21,11 +21,15 @@ export const useAxios = <T,>({
       if (axios.isAxiosError(err)) {
         setError(err);
       }
+    } finally {
+      setTimeout(() => {
+        if (data == null) setLoading(null);
+      }, 100);
     }
   };
   useEffect(() => {
     fetchData();
-  }, [url]); // Re-fetch when the URL or options change
+  }, [url]);
 
   return { data, error, loading };
 };
