@@ -3,23 +3,34 @@ import { AxiosError } from 'axios';
 
 import { useAxios } from 'api/axios/useAxios';
 import { jobsPublic } from 'api/links/links';
+import { UseAxiosResult } from 'api/axios/useAxios.types';
+
+import {
+  Project,
+  Level,
+  Framework,
+  Language,
+  jobsList,
+} from './JobsList.types';
 
 export const JobsList = () => {
-  const jobsLists = useAxios({ url: jobsPublic as any });
+  const jobsObject: UseAxiosResult<jobsList> = useAxios({ url: jobsPublic });
 
-  console.log(jobsLists);
+  const jobList = jobsObject.data;
+  console.log(jobsObject);
+  console.log(jobList?.languages[1]?.frameworks[0]?.name);
 
   return (
     <div>
-      {jobsLists.loading && <p>Trwa ładowanie danych...</p>}
-      {(jobsLists as any).error && (
+      {jobsObject.loading && <p>Trwa ładowanie danych...</p>}
+      {(jobsObject as any).error && (
         <p>
           Wystąpił błąd podczas ładowania danych:{' '}
-          {(jobsLists as any).error.message}
+          {(jobsObject as any).error.message}
         </p>
       )}
-      {jobsLists.data && (
-        <p>{JSON.stringify((jobsLists.data as any)?.languages[0])}</p>
+      {jobsObject.data && (
+        <p>{JSON.stringify((jobsObject.data as any)?.languages[0])}</p>
       )}
     </div>
   );
