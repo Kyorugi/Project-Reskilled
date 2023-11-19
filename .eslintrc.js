@@ -55,7 +55,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'import/prefer-default-export': 'off',
     'import/no-default-export': 'error',
-    'arrow-body-style': ['error', 'always'],
+    'arrow-body-style': 'off',
     'prettier/prettier': 'error',
     'import/order': [
       'error',

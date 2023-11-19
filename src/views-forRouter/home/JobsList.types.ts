@@ -8,7 +8,7 @@ export interface Level {
 }
 
 export interface Framework {
-  name: String;
+  name: string;
   levels?: Level[];
 }
 
