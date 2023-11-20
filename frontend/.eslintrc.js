@@ -91,6 +91,9 @@ module.exports = {
       },
       files: ['**/?(*.)+(test).ts?(x)'],
       extends: ['plugin:testing-library/react', 'plugin:jest/recommended'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+      },
     },
   ],
 };
