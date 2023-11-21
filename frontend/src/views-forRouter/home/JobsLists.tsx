@@ -23,76 +23,78 @@ import {
   Language,
   jobsList,
 } from './JobsList.types';
-import { NestedList } from './JobListBox';
 
-export const JobsList = () => {
-  const jobsObject: UseAxiosResult<jobsList> = useAxios({ url: jobsPublic });
+interface NestedListItemProps {
+  icon?: React.ReactNode;
+  primary: string;
+  nestedItems?: NestedListItemProps[];
+}
 
-  const [open, setOpen] = React.useState(true);
+const NestedListItem: React.FC<NestedListItemProps> = ({
+  icon,
+  primary,
+  nestedItems,
+}) => {
+  const [open, setOpen] = React.useState(false);
 
   const handleClick = () => {
     setOpen(!open);
   };
 
+  return (
+    <>
+      <ListItemButton onClick={handleClick}>
+        <ListItemIcon>{icon}</ListItemIcon>
+        <ListItemText primary={primary} />
+        {open ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding sx={{ paddingLeft: 8 }}>
+          {nestedItems &&
+            nestedItems.map((nestedItem) => (
+              <NestedListItem key={nestedItem.primary} {...nestedItem} />
+            ))}
+        </List>
+      </Collapse>
+    </>
+  );
+};
+
+export const JobsList = () => {
+  const jobsObject: UseAxiosResult<jobsList> = useAxios({ url: jobsPublic });
+
   const jobList = jobsObject.data;
-  console.log(jobsObject);
-  console.log(jobList?.languages[1]?.frameworks[0]?.name);
 
   return (
     <div>
       {jobsObject.loading && <p>Trwa ładowanie danych...</p>}
-      {(jobsObject as any).error && (
+      {jobsObject.error && (
         <p>
-          Wystąpił błąd podczas ładowania danych:{' '}
-          {(jobsObject as any).error.message}
+          Wystąpił błąd podczas ładowania danych: {jobsObject.error.message}
         </p>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {jobList?.languages.map((language) => (
-          <select key={language.jobId}>
-            <option>{language.name}</option>
-            {language.frameworks.map((framework) => (
-              <option key={framework.name} label={framework.name}>
-                {/* <h3>{framework.name}</h3> */}
-                {framework.levels?.map((level) => (
-                  <option key={level.name} label={level.name}>
-                    {/* <h4>{level.name}</h4> */}
-                    {level.projects?.map((project) => (
-                      <option key={project.name}>{project.name}</option>
-                    ))}
-                  </option>
-                ))}
-              </option>
-            ))}
-          </select>
-        ))}
-      </div>
       <List
         sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
         component="nav"
-        aria-labelledby="nested-list-subheader"
       >
         {jobList?.languages.map((language) => (
-          <ListItemButton onClick={handleClick} key={language.jobId}>
-            <ListItemIcon>
-              <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary={language.name} />
-            {open ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
+          <NestedListItem
+            key={language.jobId}
+            icon={<SendIcon />}
+            primary={language.name}
+            nestedItems={language.frameworks.map((framework) => ({
+              icon: <FaFolderTree />,
+              primary: framework.name,
+              nestedItems: framework.levels?.map((level) => ({
+                primary: level.name,
+                nestedItems: level.projects?.map((project) => ({
+                  primary: project.name,
+                })),
+              })),
+            }))}
+          />
         ))}
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemIcon>
-                <FaFolderTree />
-              </ListItemIcon>
-              <ListItemText primary="coś" />
-            </ListItemButton>
-          </List>
-        </Collapse>
       </List>
-      <NestedList />
     </div>
   );
 };
