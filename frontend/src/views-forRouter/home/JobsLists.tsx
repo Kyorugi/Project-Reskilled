@@ -1,6 +1,16 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { AxiosError } from 'axios';
-import { List } from '@mui/material';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import DraftsIcon from '@mui/icons-material/Drafts';
+import SendIcon from '@mui/icons-material/Send';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import { FaFolderTree } from 'react-icons/fa6';
 
 import { useAxios } from 'api/axios/useAxios';
 import { jobsPublic } from 'api/links/links';
@@ -14,53 +24,77 @@ import {
   jobsList,
 } from './JobsList.types';
 
+interface NestedListItemProps {
+  icon?: React.ReactNode;
+  primary: string;
+  nestedItems?: NestedListItemProps[];
+}
+
+const NestedListItem: React.FC<NestedListItemProps> = ({
+  icon,
+  primary,
+  nestedItems,
+}) => {
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+
+  return (
+    <>
+      <ListItemButton onClick={handleClick}>
+        <ListItemIcon>{icon}</ListItemIcon>
+        <ListItemText primary={primary} />
+        {open ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding sx={{ paddingLeft: 8 }}>
+          {nestedItems &&
+            nestedItems.map((nestedItem) => (
+              <NestedListItem key={nestedItem.primary} {...nestedItem} />
+            ))}
+        </List>
+      </Collapse>
+    </>
+  );
+};
+
 export const JobsList = () => {
   const jobsObject: UseAxiosResult<jobsList> = useAxios({ url: jobsPublic });
 
   const jobList = jobsObject.data;
-  console.log(jobsObject);
-  console.log(jobList?.languages[1]?.frameworks[0]?.name);
-
-  const [isVisible, setIsVisible] = useState(true);
-
-  const handleToggleByDivChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const newVisibility = e.target.value === 'true';
-    setIsVisible(newVisibility);
-  };
 
   return (
     <div>
       {jobsObject.loading && <p>Trwa ładowanie danych...</p>}
-      {(jobsObject as any).error && (
+      {jobsObject.error && (
         <p>
-          Wystąpił błąd podczas ładowania danych:{' '}
-          {(jobsObject as any).error.message}
+          Wystąpił błąd podczas ładowania danych: {jobsObject.error.message}
         </p>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <List
+        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        component="nav"
+      >
         {jobList?.languages.map((language) => (
-          <select
-            onChange={handleToggleByDivChange}
-            value={isVisible.toString()}
+          <NestedListItem
             key={language.jobId}
-          >
-            <option>{language.name}</option>
-            {language.frameworks.map((framework) => (
-              <option key={framework.name} label={framework.name}>
-                {/* <h3>{framework.name}</h3> */}
-                {framework.levels?.map((level) => (
-                  <option key={level.name} label={level.name}>
-                    {/* <h4>{level.name}</h4> */}
-                    {level.projects?.map((project) => (
-                      <option key={project.name}>{project.name}</option>
-                    ))}
-                  </option>
-                ))}
-              </option>
-            ))}
-          </select>
+            icon={<SendIcon />}
+            primary={language.name}
+            nestedItems={language.frameworks.map((framework) => ({
+              icon: <FaFolderTree />,
+              primary: framework.name,
+              nestedItems: framework.levels?.map((level) => ({
+                primary: level.name,
+                nestedItems: level.projects?.map((project) => ({
+                  primary: project.name,
+                })),
+              })),
+            }))}
+          />
         ))}
-      </div>
+      </List>
     </div>
   );
 };
