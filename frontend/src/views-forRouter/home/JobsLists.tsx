@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, CSSProperties } from 'react';
 import { AxiosError } from 'axios';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -16,13 +16,7 @@ import { useAxios } from 'api/axios/useAxios';
 import { jobsPublic } from 'api/links/links';
 import { UseAxiosResult } from 'api/axios/useAxios.types';
 
-import {
-  Project,
-  Level,
-  Framework,
-  Language,
-  jobsList,
-} from './JobsList.types';
+import { jobsList } from './JobsList.types';
 
 interface NestedListItemProps {
   icon?: React.ReactNode;
@@ -49,7 +43,7 @@ const NestedListItem: React.FC<NestedListItemProps> = ({
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding sx={{ paddingLeft: 8 }}>
+        <List component="div" disablePadding sx={{ paddingLeft: 3 }}>
           {nestedItems &&
             nestedItems.map((nestedItem) => (
               <NestedListItem key={nestedItem.primary} {...nestedItem} />
@@ -74,7 +68,11 @@ export const JobsList = () => {
         </p>
       )}
       <List
-        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        sx={{
+          width: '100%',
+          maxWidth: 360,
+          bgcolor: 'background.paper',
+        }}
         component="nav"
       >
         {jobList?.languages.map((language) => (
