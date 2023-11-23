@@ -16,15 +16,21 @@ export const useAxios = <T,>({
     try {
       setLoading('trwa ładowanie danych');
       const response = await axios(url, options);
-      setData(response.data);
+      setTimeout(() => {
+        setData(response.data);
+        setLoading(null);
+      }, 1000);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        setError(err);
+        setTimeout(() => {
+          const axiosError = err as AxiosError<T>;
+          setError(axiosError);
+        }, 1000);
       }
     } finally {
       setTimeout(() => {
-        if (data == null) setLoading(null);
-      }, 100);
+        if (data || data == null) setLoading(null);
+      }, 1000);
     }
   };
   useEffect(() => {
