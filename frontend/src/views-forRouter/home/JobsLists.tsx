@@ -1,12 +1,9 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { AxiosError } from 'axios';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
 import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -16,13 +13,7 @@ import { useAxios } from 'api/axios/useAxios';
 import { jobsPublic } from 'api/links/links';
 import { UseAxiosResult } from 'api/axios/useAxios.types';
 
-import {
-  Project,
-  Level,
-  Framework,
-  Language,
-  jobsList,
-} from './JobsList.types';
+import { jobsList } from './JobsList.types';
 
 interface NestedListItemProps {
   icon?: React.ReactNode;
@@ -46,10 +37,12 @@ const NestedListItem: React.FC<NestedListItemProps> = ({
       <ListItemButton onClick={handleClick}>
         <ListItemIcon>{icon}</ListItemIcon>
         <ListItemText primary={primary} />
-        {open ? <ExpandLess /> : <ExpandMore />}
+        {nestedItems &&
+          nestedItems.length > 0 &&
+          (open ? <ExpandLess /> : <ExpandMore />)}
       </ListItemButton>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding sx={{ paddingLeft: 8 }}>
+      <Collapse in={open} timeout="auto" unmountOnExit sx={{ paddingLeft: 6 }}>
+        <List component="div" disablePadding sx={{ paddingLeft: 2 }}>
           {nestedItems &&
             nestedItems.map((nestedItem) => (
               <NestedListItem key={nestedItem.primary} {...nestedItem} />
@@ -74,13 +67,16 @@ export const JobsList = () => {
         </p>
       )}
       <List
-        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        sx={{
+          width: '100%',
+          maxWidth: 460,
+          bgcolor: 'background.paper',
+        }}
         component="nav"
       >
         {jobList?.languages.map((language) => (
           <NestedListItem
             key={language.jobId}
-            icon={<SendIcon />}
             primary={language.name}
             nestedItems={language.frameworks.map((framework) => ({
               icon: <FaFolderTree />,
