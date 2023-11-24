@@ -12,31 +12,32 @@ export const useAxios = <T,>({
   const [error, setError] = useState<AxiosError<T> | null>(null);
   const [loading, setLoading] = useState<string | undefined | null>();
 
-  const fetchData = async () => {
-    try {
-      setLoading('trwa ładowanie danych');
-      const response = await axios(url, options);
-      setTimeout(() => {
-        const { data: responseData } = response;
-        setData(responseData);
-        setLoading(null);
-      }, 1000);
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading('trwa ładowanie danych');
+        const response = await axios(url, options);
         setTimeout(() => {
-          const axiosError = err as AxiosError<T>;
-          setError(axiosError);
+          const { data: responseData } = response;
+          setData(responseData);
+          setLoading(null);
+        }, 1000);
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          setTimeout(() => {
+            const axiosError = err as AxiosError<T>;
+            setError(axiosError);
+          }, 1000);
+        }
+      } finally {
+        setTimeout(() => {
+          if (data || data == null) setLoading(null);
         }, 1000);
       }
-    } finally {
-      setTimeout(() => {
-        if (data || data == null) setLoading(null);
-      }, 1000);
-    }
-  };
-  useEffect(() => {
+    };
+
     fetchData();
-  }, [url, fetchData]);
+  }, [url, options]);
 
   return { data, error, loading };
 };
