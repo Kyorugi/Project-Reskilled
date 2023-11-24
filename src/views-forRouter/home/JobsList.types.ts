@@ -21,3 +21,9 @@ export interface Language {
 export interface jobsList {
   languages: Language[];
 }
+
+export interface NestedListItemProps {
+  icon?: React.ReactNode;
+  itemText: string;
+  nestedItems?: NestedListItemProps[];
+}
