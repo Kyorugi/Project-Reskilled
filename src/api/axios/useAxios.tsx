@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import type { AxiosError } from 'axios';
 
@@ -12,32 +12,32 @@ export const useAxios = <T,>({
   const [error, setError] = useState<AxiosError<T> | null>(null);
   const [loading, setLoading] = useState<string | undefined | null>();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading('trwa ładowanie danych');
-        const response = await axios(url, options);
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading('trwa ładowanie danych');
+      const response = await axios(url, options);
+      setTimeout(() => {
+        const { data: responseData } = response;
+        setData(responseData);
+        setLoading(null);
+      }, 1000);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
         setTimeout(() => {
-          const { data: responseData } = response;
-          setData(responseData);
-          setLoading(null);
-        }, 1000);
-      } catch (err: unknown) {
-        if (axios.isAxiosError(err)) {
-          setTimeout(() => {
-            const axiosError = err as AxiosError<T>;
-            setError(axiosError);
-          }, 1000);
-        }
-      } finally {
-        setTimeout(() => {
-          if (data || data == null) setLoading(null);
+          const axiosError = err as AxiosError<T>;
+          setError(axiosError);
         }, 1000);
       }
-    };
-
-    fetchData();
+    } finally {
+      setTimeout(() => {
+        if (data || data == null) setLoading(null);
+      }, 1000);
+    }
   }, [url, options]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return { data, error, loading };
 };
