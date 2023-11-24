@@ -1,10 +1,9 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
-import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { FaFolderTree } from 'react-icons/fa6';
@@ -13,20 +12,14 @@ import { useAxios } from 'api/axios/useAxios';
 import { jobsPublic } from 'api/links/links';
 import { UseAxiosResult } from 'api/axios/useAxios.types';
 
-import { jobsList } from './JobsList.types';
-
-interface NestedListItemProps {
-  icon?: React.ReactNode;
-  primary: string;
-  nestedItems?: NestedListItemProps[];
-}
+import { NestedListItemProps, jobsList } from './JobsList.types';
 
 const NestedListItem: React.FC<NestedListItemProps> = ({
   icon,
-  primary,
+  itemText,
   nestedItems,
 }) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleClick = () => {
     setOpen(!open);
@@ -36,7 +29,7 @@ const NestedListItem: React.FC<NestedListItemProps> = ({
     <>
       <ListItemButton onClick={handleClick}>
         <ListItemIcon>{icon}</ListItemIcon>
-        <ListItemText primary={primary} />
+        <ListItemText primary={itemText} />
         {nestedItems &&
           nestedItems.length > 0 &&
           (open ? <ExpandLess /> : <ExpandMore />)}
@@ -45,7 +38,7 @@ const NestedListItem: React.FC<NestedListItemProps> = ({
         <List component="div" disablePadding sx={{ paddingLeft: 2 }}>
           {nestedItems &&
             nestedItems.map((nestedItem) => (
-              <NestedListItem key={nestedItem.primary} {...nestedItem} />
+              <NestedListItem key={nestedItem.itemText} {...nestedItem} />
             ))}
         </List>
       </Collapse>
@@ -77,14 +70,14 @@ export const JobsList = () => {
         {jobList?.languages.map((language) => (
           <NestedListItem
             key={language.jobId}
-            primary={language.name}
+            itemText={language.name}
             nestedItems={language.frameworks.map((framework) => ({
               icon: <FaFolderTree />,
-              primary: framework.name,
+              itemText: framework.name,
               nestedItems: framework.levels?.map((level) => ({
-                primary: level.name,
+                itemText: level.name,
                 nestedItems: level.projects?.map((project) => ({
-                  primary: project.name,
+                  itemText: project.name,
                 })),
               })),
             }))}
