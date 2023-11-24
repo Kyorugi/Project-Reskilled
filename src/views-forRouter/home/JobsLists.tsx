@@ -9,9 +9,9 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { FaFolderTree } from 'react-icons/fa6';
 
-import { useAxios } from '../../api/axios/useAxios';
-import { jobsPublic } from '../../api/links/links';
-import { UseAxiosResult } from '../../api/axios/useAxios.types';
+import { useAxios } from 'api/axios/useAxios';
+import { jobsPublic } from 'api/links/links';
+import { UseAxiosResult } from 'api/axios/useAxios.types';
 
 import { NestedListItemProps, JobsListTypes } from './JobsList.types';
 
