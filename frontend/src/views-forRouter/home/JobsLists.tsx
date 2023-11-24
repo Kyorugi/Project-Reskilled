@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import React from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -12,7 +13,7 @@ import { useAxios } from 'api/axios/useAxios';
 import { jobsPublic } from 'api/links/links';
 import { UseAxiosResult } from 'api/axios/useAxios.types';
 
-import { NestedListItemProps, jobsList } from './JobsList.types';
+import { NestedListItemProps, JobsListTypes } from './JobsList.types';
 
 const NestedListItem: React.FC<NestedListItemProps> = ({
   icon,
@@ -47,7 +48,9 @@ const NestedListItem: React.FC<NestedListItemProps> = ({
 };
 
 export const JobsList = () => {
-  const jobsObject: UseAxiosResult<jobsList> = useAxios({ url: jobsPublic });
+  const jobsObject: UseAxiosResult<JobsListTypes> = useAxios({
+    url: jobsPublic,
+  });
 
   const jobList = jobsObject.data;
 

@@ -17,7 +17,8 @@ export const useAxios = <T,>({
       setLoading('trwa ładowanie danych');
       const response = await axios(url, options);
       setTimeout(() => {
-        setData(response.data);
+        const { data: responseData } = response;
+        setData(responseData);
         setLoading(null);
       }, 1000);
     } catch (err: unknown) {
