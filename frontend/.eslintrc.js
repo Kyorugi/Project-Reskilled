@@ -43,7 +43,7 @@ module.exports = {
     'react/no-unused-prop-types': 'warn',
     'react/require-default-props': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
-    '@typescript-eslint/consistent-type-imports': 'warn',
+    '@typescript-eslint/consistent-type-imports': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     'react/function-component-definition': [
       'error',
