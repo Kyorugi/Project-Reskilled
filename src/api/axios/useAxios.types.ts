@@ -2,7 +2,7 @@ import type { AxiosError, AxiosRequestConfig } from 'axios';
 
 export interface UseAxiosProps<T> {
   url: string;
-  options?: T | AxiosRequestConfig | any;
+  options?: AxiosRequestConfig;
 }
 
 export interface UseAxiosResult<T> {
