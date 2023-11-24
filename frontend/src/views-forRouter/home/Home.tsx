@@ -1,8 +1,7 @@
-import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Button, Paper, Typography } from '@mui/material';
 
-import { AppRoute } from '../../AppRoute';
+import { AppRoute } from 'AppRoute';
 
 import * as styles from './Home.style';
 import { JobsList } from './JobsLists';
