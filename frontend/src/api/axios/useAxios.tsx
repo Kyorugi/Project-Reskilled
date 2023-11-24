@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import type { AxiosError } from 'axios';
 
@@ -12,7 +12,7 @@ export const useAxios = <T,>({
   const [error, setError] = useState<AxiosError<T> | null>(null);
   const [loading, setLoading] = useState<string | undefined | null>();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading('trwa ładowanie danych');
       const response = await axios(url, options);
@@ -33,10 +33,11 @@ export const useAxios = <T,>({
         if (data || data == null) setLoading(null);
       }, 1000);
     }
-  };
+  }, [url, options, data]);
+
   useEffect(() => {
     fetchData();
-  }, [url]);
+  }, []);
 
   return { data, error, loading };
 };
