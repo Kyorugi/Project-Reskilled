@@ -18,7 +18,7 @@ export interface Language {
   jobId: string;
 }
 
-export interface jobsList {
+export interface JobsListTypes {
   languages: Language[];
 }
 
