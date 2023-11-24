@@ -33,11 +33,11 @@ export const useAxios = <T,>({
         if (data || data == null) setLoading(null);
       }, 1000);
     }
-  }, [url, options]);
+  }, [url, options, data]);
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   return { data, error, loading };
 };
