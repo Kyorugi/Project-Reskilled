@@ -140,7 +140,7 @@ export const SignUp = () => {
           id="passwordRepeat"
           label="Repeat Password*"
           variant="standard"
-          {...register('password', {
+          {...register('passwordRepeat', {
             required: 'This field cannot be empty',
             pattern: {
               value: passwordRegex,
