@@ -25,7 +25,7 @@ export const Home = () => {
           </Button>
           <Button
             component={Link}
-            to={AppRoute.home}
+            to={AppRoute.signUp}
             variant="contained"
             size="large"
             style={{ backgroundColor: '#009688' }}
