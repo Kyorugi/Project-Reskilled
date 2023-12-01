@@ -27,11 +27,16 @@ export const SignUp = () => {
     formState: { errors },
     register,
     handleSubmit,
+    watch,
   } = useForm<SignUpPayload>();
 
   const onSubmit = useCallback((payload: SignUpPayload) => {
     console.log('payload:', payload);
   }, []);
+
+  const watchPassword = watch('password');
+  const watchPasswordRepeat = watch('passwordRepeat');
+  // console.log(watchPassword);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -147,9 +152,15 @@ export const SignUp = () => {
               message:
                 'Password should be 5-15 characters long, no spaces allowed',
             },
+            validate: (value) => value === watchPassword,
           })}
-          error={Boolean(errors.password)}
-          helperText={errors.password?.message}
+          error={
+            Boolean(errors.password) || watchPassword !== watchPasswordRepeat
+          }
+          helperText={
+            errors.password?.message ||
+            (watchPassword !== watchPasswordRepeat && 'Passwords do not match')
+          }
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
