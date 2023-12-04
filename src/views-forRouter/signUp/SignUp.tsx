@@ -4,10 +4,6 @@ import {
   Button,
   Paper,
   TextField,
-  Input,
-  FormControl,
-  InputLabel,
-  FormHelperText,
   IconButton,
   InputAdornment,
 } from '@mui/material';
@@ -18,6 +14,8 @@ import { useForm } from 'react-hook-form';
 
 import { AppRoute } from 'AppRoute';
 import { emailRegex, namesRegex, passwordRegex } from 'common/regexList';
+import { userRegister } from 'api/links/links';
+import { useAxios } from 'api/axios/useAxios';
 
 import { SignUpPayload } from './SignUp.types';
 import * as styles from './SignUp.style';
@@ -30,13 +28,34 @@ export const SignUp = () => {
     watch,
   } = useForm<SignUpPayload>();
 
-  const onSubmit = useCallback((payload: SignUpPayload) => {
-    console.log('payload:', payload);
-  }, []);
+  const axiosOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: null as SignUpPayload | null,
+  };
+
+  const axiosResult = useAxios({
+    url: userRegister,
+    options: axiosOptions,
+  });
+
+  const onSubmit = async (payload: SignUpPayload) => {
+    axiosOptions.data = payload;
+    const { data, error, loading } = axiosResult;
+
+    if (data) {
+      console.log('Rejestracja udana:', data);
+    }
+
+    if (error) {
+      console.error('Błąd rejestracji:', error);
+    }
+  };
 
   const watchPassword = watch('password');
   const watchPasswordRepeat = watch('passwordRepeat');
-  // console.log(watchPassword);
 
   const [showPassword, setShowPassword] = useState(false);
 
