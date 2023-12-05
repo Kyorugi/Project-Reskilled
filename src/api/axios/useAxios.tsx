@@ -35,9 +35,9 @@ export const useAxios = <T,>({
     }
   }, [url, options, data]);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
-  return { data, error, loading };
+  return { data, error, loading, fetchData };
 };

@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { AppRoute } from 'AppRoute';
@@ -27,6 +27,9 @@ export const SignUp = () => {
     handleSubmit,
     watch,
   } = useForm<SignUpPayload>();
+  // const [isRegistrationSuccessful, setIsRegistrationSuccessful] = useState<
+  //   boolean | null
+  // >(null);
 
   const axiosOptions = {
     method: 'POST',
@@ -41,16 +44,23 @@ export const SignUp = () => {
     options: axiosOptions,
   });
 
+  const {
+    data: axiosData,
+    error: axiosError,
+    fetchData: fetchAxiosData,
+  } = axiosResult;
+
   const onSubmit = async (payload: SignUpPayload) => {
-    axiosOptions.data = payload;
-    const { data, error, loading } = axiosResult;
+    const { passwordRepeat, ...payloadWithoutPasswordRepeat } = payload;
+    axiosOptions.data = payloadWithoutPasswordRepeat;
 
-    if (data) {
-      console.log('Rejestracja udana:', data);
-    }
+    await fetchAxiosData();
 
-    if (error) {
-      console.error('Błąd rejestracji:', error);
+    if (axiosError?.response) {
+      console.error('Błąd rejestracji:', axiosError.response.data);
+    } else if (axiosOptions.data) {
+      // setIsRegistrationSuccessful(true);
+      console.log('Rejestracja udana', axiosOptions.data);
     }
   };
 
@@ -127,7 +137,6 @@ export const SignUp = () => {
         />
 
         <TextField
-          // type="password"
           type={showPassword ? 'text' : 'password'}
           id="password"
           label="Password*"
@@ -160,7 +169,6 @@ export const SignUp = () => {
 
         <TextField
           type={showPassword ? 'text' : 'password'}
-          // type="password"
           id="passwordRepeat"
           label="Repeat Password*"
           variant="standard"

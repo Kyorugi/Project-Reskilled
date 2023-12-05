@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as React from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -11,7 +11,7 @@ import { FaFolderTree } from 'react-icons/fa6';
 
 import { useAxios } from 'api/axios/useAxios';
 import { jobsPublic } from 'api/links/links';
-import { UseAxiosResult } from 'api/axios/useAxios.types';
+import { UseAxiosProps, UseAxiosResult } from 'api/axios/useAxios.types';
 
 import { NestedListItemProps, JobsListTypes } from './JobsList.types';
 
@@ -51,6 +51,11 @@ export const JobsList = () => {
   const jobsObject: UseAxiosResult<JobsListTypes> = useAxios({
     url: jobsPublic,
   });
+
+  const { fetchData: fetchJobsData } = jobsObject;
+  useEffect(() => {
+    fetchJobsData();
+  }, []);
 
   const jobList = jobsObject.data;
 
