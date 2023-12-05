@@ -27,9 +27,7 @@ export const SignUp = () => {
     handleSubmit,
     watch,
   } = useForm<SignUpPayload>();
-  // const [isRegistrationSuccessful, setIsRegistrationSuccessful] = useState<
-  //   boolean | null
-  // >(null);
+  const [emailError, setEmailError] = useState<boolean>(false);
 
   const axiosOptions = {
     method: 'POST',
@@ -44,25 +42,18 @@ export const SignUp = () => {
     options: axiosOptions,
   });
 
-  const {
-    data: axiosData,
-    error: axiosError,
-    fetchData: fetchAxiosData,
-  } = axiosResult;
+  const { error: axiosError, fetchData } = axiosResult;
 
   const onSubmit = async (payload: SignUpPayload) => {
     const { passwordRepeat, ...payloadWithoutPasswordRepeat } = payload;
     axiosOptions.data = payloadWithoutPasswordRepeat;
-
-    await fetchAxiosData();
-
-    if (axiosError?.response) {
-      console.error('Błąd rejestracji:', axiosError.response.data);
-    } else if (axiosOptions.data) {
-      // setIsRegistrationSuccessful(true);
-      console.log('Rejestracja udana', axiosOptions.data);
-    }
+    await fetchData();
   };
+  useEffect(() => {
+    if (axiosError?.response?.status === 409) {
+      setEmailError(true);
+    }
+  }, [axiosError]);
 
   const watchPassword = watch('password');
   const watchPasswordRepeat = watch('passwordRepeat');
@@ -131,8 +122,10 @@ export const SignUp = () => {
               message: 'Please enter a valid email address',
             },
           })}
-          error={Boolean(errors.email)}
-          helperText={errors.email?.message}
+          error={Boolean(errors.email || emailError === true)}
+          helperText={
+            errors.email?.message || axiosError ? 'e-mial already exist' : ''
+          }
           autoComplete="email"
         />
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import type { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
 import type { UseAxiosProps, UseAxiosResult } from './useAxios.types';
 
@@ -16,17 +16,23 @@ export const useAxios = <T,>({
     try {
       setLoading('trwa ładowanie danych');
       const response = await axios(url, options);
-      setTimeout(() => {
-        const { data: responseData } = response;
-        setData(responseData);
-        setLoading(null);
-      }, 1000);
+      const { data: responseData } = response;
+      setData(responseData);
+      setLoading(null);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        setTimeout(() => {
-          const axiosError = err as AxiosError<T>;
+        const axiosError = err as AxiosError<T>;
+        if (axiosError.response) {
+          console.error(
+            'Error:',
+            axiosError.response.status,
+            axiosError.response.data,
+          );
           setError(axiosError);
-        }, 1000);
+        } else {
+          console.error('Unknown Error:', err);
+          setError(axiosError);
+        }
       }
     } finally {
       setTimeout(() => {
@@ -34,10 +40,6 @@ export const useAxios = <T,>({
       }, 1000);
     }
   }, [url, options, data]);
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
 
   return { data, error, loading, fetchData };
 };
