@@ -122,9 +122,10 @@ export const SignUp = () => {
               message: 'Please enter a valid email address',
             },
           })}
-          error={Boolean(errors.email || emailError === true)}
+          error={Boolean(errors.email || axiosError?.response?.status === 409)}
           helperText={
-            errors.email?.message || axiosError ? 'e-mial already exist' : ''
+            errors.email?.message ||
+            (axiosError?.response?.status === 409 ? 'e-mail already exist' : '')
           }
           autoComplete="email"
         />
