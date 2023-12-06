@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import { AxiosError } from 'axios';
+import { useState, useCallback } from 'react';
+import axios, { AxiosError } from 'axios';
 
 import type { UseAxiosProps, UseAxiosResult } from './useAxios.types';
 

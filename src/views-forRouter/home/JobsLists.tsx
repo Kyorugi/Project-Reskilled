@@ -11,7 +11,7 @@ import { FaFolderTree } from 'react-icons/fa6';
 
 import { useAxios } from 'api/axios/useAxios';
 import { jobsPublic } from 'api/links/links';
-import { UseAxiosProps, UseAxiosResult } from 'api/axios/useAxios.types';
+import { UseAxiosResult } from 'api/axios/useAxios.types';
 
 import { NestedListItemProps, JobsListTypes } from './JobsList.types';
 
@@ -52,10 +52,13 @@ export const JobsList = () => {
     url: jobsPublic,
   });
 
-  const { fetchData: fetchJobsData } = jobsObject;
+  const { data: jobsData, fetchData: fetchJobsData } = jobsObject;
+
   useEffect(() => {
-    fetchJobsData();
-  }, []);
+    if (!jobsData) {
+      fetchJobsData();
+    }
+  }, [jobsData, fetchJobsData]);
 
   const jobList = jobsObject.data;
 
