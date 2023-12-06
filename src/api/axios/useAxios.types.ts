@@ -9,4 +9,5 @@ export interface UseAxiosResult<T> {
   data: T | null;
   error: AxiosError<T> | null;
   loading: string | undefined | null;
+  fetchData: () => Promise<void>;
 }

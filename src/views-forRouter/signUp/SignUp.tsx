@@ -4,20 +4,18 @@ import {
   Button,
   Paper,
   TextField,
-  Input,
-  FormControl,
-  InputLabel,
-  FormHelperText,
   IconButton,
   InputAdornment,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { AppRoute } from 'AppRoute';
 import { emailRegex, namesRegex, passwordRegex } from 'common/regexList';
+import { userRegister } from 'api/links/links';
+import { useAxios } from 'api/axios/useAxios';
 
 import { SignUpPayload } from './SignUp.types';
 import * as styles from './SignUp.style';
@@ -27,11 +25,38 @@ export const SignUp = () => {
     formState: { errors },
     register,
     handleSubmit,
+    watch,
   } = useForm<SignUpPayload>();
+  const [emailError, setEmailError] = useState<boolean>(false);
 
-  const onSubmit = useCallback((payload: SignUpPayload) => {
-    console.log('payload:', payload);
-  }, []);
+  const axiosOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: null as SignUpPayload | null,
+  };
+
+  const axiosResult = useAxios({
+    url: userRegister,
+    options: axiosOptions,
+  });
+
+  const { error: axiosError, fetchData } = axiosResult;
+
+  const onSubmit = async (payload: SignUpPayload) => {
+    const { passwordRepeat, ...payloadWithoutPasswordRepeat } = payload;
+    axiosOptions.data = payloadWithoutPasswordRepeat;
+    await fetchData();
+  };
+  useEffect(() => {
+    if (axiosError?.response?.status === 409) {
+      setEmailError(true);
+    }
+  }, [axiosError]);
+
+  const watchPassword = watch('password');
+  const watchPasswordRepeat = watch('passwordRepeat');
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -97,13 +122,14 @@ export const SignUp = () => {
               message: 'Please enter a valid email address',
             },
           })}
-          error={Boolean(errors.email)}
-          helperText={errors.email?.message}
+          error={Boolean(errors.email || emailError === true)}
+          helperText={
+            errors.email?.message || axiosError ? 'e-mial already exist' : ''
+          }
           autoComplete="email"
         />
 
         <TextField
-          // type="password"
           type={showPassword ? 'text' : 'password'}
           id="password"
           label="Password*"
@@ -136,20 +162,25 @@ export const SignUp = () => {
 
         <TextField
           type={showPassword ? 'text' : 'password'}
-          // type="password"
           id="passwordRepeat"
           label="Repeat Password*"
           variant="standard"
-          {...register('password', {
+          {...register('passwordRepeat', {
             required: 'This field cannot be empty',
             pattern: {
               value: passwordRegex,
               message:
                 'Password should be 5-15 characters long, no spaces allowed',
             },
+            validate: (value) => value === watchPassword,
           })}
-          error={Boolean(errors.password)}
-          helperText={errors.password?.message}
+          error={
+            Boolean(errors.password) || watchPassword !== watchPasswordRepeat
+          }
+          helperText={
+            errors.password?.message ||
+            (watchPassword !== watchPasswordRepeat && 'Passwords do not match')
+          }
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

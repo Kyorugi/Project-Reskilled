@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as React from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -51,6 +51,14 @@ export const JobsList = () => {
   const jobsObject: UseAxiosResult<JobsListTypes> = useAxios({
     url: jobsPublic,
   });
+
+  const { data: jobsData, fetchData: fetchJobsData } = jobsObject;
+
+  useEffect(() => {
+    if (!jobsData) {
+      fetchJobsData();
+    }
+  }, [jobsData, fetchJobsData]);
 
   const jobList = jobsObject.data;
 

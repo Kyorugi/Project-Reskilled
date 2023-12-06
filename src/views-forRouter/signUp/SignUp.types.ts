@@ -3,5 +3,5 @@ export type SignUpPayload = {
   lastName: string;
   email: string;
   password: string;
-  passwordRepeat: string;
+  passwordRepeat?: string;
 };
