@@ -9,30 +9,37 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Checkbox from '@mui/material/Checkbox';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { AppRoute } from 'AppRoute';
-import { emailRegex, namesRegex, passwordRegex } from 'common/regexList';
+import { emailRegex, passwordRegex } from 'common/regexList';
 import { useAxios } from 'api/axios/useAxios';
 
-import { SignUpPayload } from './SignUp.types';
-import * as styles from './SignUp.style';
+import { SignInPayload } from './SignIn.types';
+import * as styles from './SignIn.style';
 
-export const SignUp = () => {
+export const SignIn = () => {
   const {
     formState: { errors },
     register,
     handleSubmit,
     watch,
-  } = useForm<SignUpPayload>();
+  } = useForm<SignInPayload>();
+
+  const [checked, setChecked] = useState<boolean>(false);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
 
   const axiosOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    data: null as SignUpPayload | null,
+    data: null as SignInPayload | null,
   };
 
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -48,14 +55,12 @@ export const SignUp = () => {
     emailError: emailAlreadyExist,
   } = axiosResult;
 
-  const onSubmit = async (payload: SignUpPayload) => {
-    const { passwordRepeat, ...payloadWithoutPasswordRepeat } = payload;
-    axiosOptions.data = payloadWithoutPasswordRepeat;
+  const onSubmit = async (payload: SignInPayload) => {
+    axiosOptions.data = payload;
     await fetchData();
   };
 
   const watchPassword = watch('password');
-  const watchPasswordRepeat = watch('passwordRepeat');
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -73,41 +78,7 @@ export const SignUp = () => {
         component="form"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <h1>Sign Up</h1>
-        <TextField
-          id="firstName"
-          label="First Name*"
-          variant="standard"
-          {...register('firstName', {
-            required: 'This field cannot be empty',
-            pattern: {
-              value: namesRegex,
-              message:
-                'Name should be 3-15 characters long, only letters allowed',
-            },
-          })}
-          error={Boolean(errors.firstName)}
-          helperText={errors.firstName?.message}
-          autoComplete="firstName"
-        />
-
-        <TextField
-          type="text"
-          id="lastName"
-          label="Last Name*"
-          variant="standard"
-          {...register('lastName', {
-            required: 'This field cannot be empty',
-            pattern: {
-              value: namesRegex,
-              message:
-                'Last Name should be 3-15 characters long, only letters allowed',
-            },
-          })}
-          error={Boolean(errors.lastName)}
-          helperText={errors.lastName?.message}
-          autoComplete="lastName"
-        />
+        <h1>Sign In</h1>
 
         <TextField
           type="text"
@@ -165,43 +136,16 @@ export const SignUp = () => {
           }}
           autoComplete="new-password"
         />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Checkbox
+            checked={checked}
+            onChange={handleChange}
+            inputProps={{ 'aria-label': 'controlled' }}
+            style={{ width: 20, marginRight: 10 }}
+          />
+          <span> Remamber me</span>
+        </div>
 
-        <TextField
-          type={showPassword ? 'text' : 'password'}
-          id="passwordRepeat"
-          label="Repeat Password*"
-          variant="standard"
-          {...register('passwordRepeat', {
-            required: 'This field cannot be empty',
-            pattern: {
-              value: passwordRegex,
-              message:
-                'Password should be 5-15 characters long, no spaces allowed',
-            },
-            validate: (value) => value === watchPassword,
-          })}
-          error={
-            Boolean(errors.password) || watchPassword !== watchPasswordRepeat
-          }
-          helperText={
-            errors.password?.message ||
-            (watchPassword !== watchPasswordRepeat && 'Passwords do not match')
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          autoComplete="new-password"
-        />
         <Button
           type="submit"
           variant="contained"
@@ -213,11 +157,11 @@ export const SignUp = () => {
             marginTop: 10,
           }}
         >
-          Sign up
+          Sign in
         </Button>
         <p>
-          Already have an account? Then{' '}
-          <Link to={`/${AppRoute.signIn}`}>Sign In</Link>
+          Don't have an account?{' '}
+          <Link to={`/${AppRoute.signUp}`}>Click here to create one</Link>
         </p>
       </Paper>
     </Box>
