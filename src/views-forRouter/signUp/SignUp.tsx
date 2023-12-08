@@ -14,7 +14,6 @@ import { useForm } from 'react-hook-form';
 
 import { AppRoute } from 'AppRoute';
 import { emailRegex, namesRegex, passwordRegex } from 'common/regexList';
-import { userRegister } from 'api/links/links';
 import { useAxios } from 'api/axios/useAxios';
 
 import { SignUpPayload } from './SignUp.types';
@@ -27,7 +26,8 @@ export const SignUp = () => {
     handleSubmit,
     watch,
   } = useForm<SignUpPayload>();
-  const [emailError, setEmailError] = useState<boolean>(false);
+
+  // const [emailError, setEmailError] = useState<boolean>(false);
 
   const axiosOptions = {
     method: 'POST',
@@ -37,23 +37,34 @@ export const SignUp = () => {
     data: null as SignUpPayload | null,
   };
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const axiosResult = useAxios({
-    url: userRegister,
+    url: `${apiUrl}/auth/register`,
     options: axiosOptions,
   });
 
-  const { error: axiosError, fetchData } = axiosResult;
+  const {
+    error: axiosError,
+    fetchData,
+    emailError: emailAlreadyExist,
+  } = axiosResult;
 
   const onSubmit = async (payload: SignUpPayload) => {
     const { passwordRepeat, ...payloadWithoutPasswordRepeat } = payload;
     axiosOptions.data = payloadWithoutPasswordRepeat;
     await fetchData();
   };
+
   useEffect(() => {
     if (axiosError?.response?.status === 409) {
-      setEmailError(true);
+      // setEmailError(true);
+    } else {
+      // setEmailError(false);
     }
-  }, [axiosError]);
+
+    console.log(emailAlreadyExist);
+  }, [axiosResult]);
 
   const watchPassword = watch('password');
   const watchPasswordRepeat = watch('passwordRepeat');
@@ -122,9 +133,16 @@ export const SignUp = () => {
               message: 'Please enter a valid email address',
             },
           })}
-          error={Boolean(errors.email || emailError === true)}
+          error={Boolean(
+            errors.email ||
+              (axiosError?.response?.status === 409 &&
+                emailAlreadyExist === true),
+          )}
           helperText={
-            errors.email?.message || axiosError ? 'e-mial already exist' : ''
+            errors.email?.message ||
+            (axiosError?.response?.status === 409 && emailAlreadyExist === true
+              ? 'e-mail already exist'
+              : '')
           }
           autoComplete="email"
         />
