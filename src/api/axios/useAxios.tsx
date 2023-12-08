@@ -10,6 +10,7 @@ export const useAxios = <T,>({
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<AxiosError<T> | null>(null);
   const [loading, setLoading] = useState<string | undefined | null>();
+  const [emailError, setEmailError] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -17,11 +18,13 @@ export const useAxios = <T,>({
       const response = await axios(url, options);
       const { data: responseData } = response;
       setData(responseData);
+      setEmailError(false);
       setLoading(null);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError<T>;
         if (axiosError.response) {
+          setEmailError(true);
           console.error(
             'Error:',
             axiosError.response.status,
@@ -40,5 +43,5 @@ export const useAxios = <T,>({
     }
   }, [url, options, data]);
 
-  return { data, error, loading, fetchData };
+  return { data, error, loading, fetchData, emailError };
 };

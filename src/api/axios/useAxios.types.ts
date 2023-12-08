@@ -1,4 +1,5 @@
 import type { AxiosError, AxiosRequestConfig } from 'axios';
+import React, { SetStateAction } from 'react';
 
 export interface UseAxiosProps<T> {
   url: string;
@@ -10,4 +11,5 @@ export interface UseAxiosResult<T> {
   error: AxiosError<T> | null;
   loading: string | undefined | null;
   fetchData: () => Promise<void>;
+  emailError: boolean;
 }
