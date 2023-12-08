@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { AppRoute } from 'AppRoute';
@@ -26,8 +26,6 @@ export const SignUp = () => {
     handleSubmit,
     watch,
   } = useForm<SignUpPayload>();
-
-  // const [emailError, setEmailError] = useState<boolean>(false);
 
   const axiosOptions = {
     method: 'POST',
@@ -55,16 +53,6 @@ export const SignUp = () => {
     axiosOptions.data = payloadWithoutPasswordRepeat;
     await fetchData();
   };
-
-  useEffect(() => {
-    if (axiosError?.response?.status === 409) {
-      // setEmailError(true);
-    } else {
-      // setEmailError(false);
-    }
-
-    console.log(emailAlreadyExist);
-  }, [axiosResult]);
 
   const watchPassword = watch('password');
   const watchPasswordRepeat = watch('passwordRepeat');

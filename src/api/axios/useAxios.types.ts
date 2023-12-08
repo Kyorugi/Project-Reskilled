@@ -1,6 +1,4 @@
 import type { AxiosError, AxiosRequestConfig } from 'axios';
-import React, { SetStateAction } from 'react';
-
 export interface UseAxiosProps<T> {
   url: string;
   options?: AxiosRequestConfig;
