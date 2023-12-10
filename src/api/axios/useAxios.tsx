@@ -9,17 +9,17 @@ export const useAxios = <T,>({
 }: UseAxiosProps<T>): UseAxiosResult<T> => {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<AxiosError<T> | null>(null);
-  const [loading, setLoading] = useState<string | undefined | null>();
+  const [loading, setLoading] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
     try {
-      setLoading('trwa ładowanie danych');
+      setLoading(true);
       const response = await axios(url, options);
       const { data: responseData } = response;
       setData(responseData);
       setEmailError(false);
-      setLoading(null);
+      setLoading(false);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError<T>;
@@ -38,7 +38,7 @@ export const useAxios = <T,>({
       }
     } finally {
       setTimeout(() => {
-        if (data || data == null) setLoading(null);
+        if (data || data == null) setLoading(false);
       }, 1000);
     }
   }, [url, options, data]);

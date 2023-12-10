@@ -6,6 +6,8 @@ import {
   TextField,
   IconButton,
   InputAdornment,
+  FormGroup,
+  FormControlLabel,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -25,19 +27,19 @@ export const SignIn = () => {
     formState: { errors },
     register,
     handleSubmit,
-    watch,
   } = useForm<SignInPayload>();
 
-  const [checked, setChecked] = useState<boolean>(false);
+  const [isRememberChecked, setIsRememberChecked] = useState<boolean>(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
+    setIsRememberChecked(event.target.checked);
   };
 
   const axiosOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: 'Bearer token',
     },
     data: null as SignInPayload | null,
   };
@@ -45,7 +47,7 @@ export const SignIn = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const axiosResult = useAxios({
-    url: `${apiUrl}/auth/register`,
+    url: `${apiUrl}/auth/login`,
     options: axiosOptions,
   });
 
@@ -53,14 +55,13 @@ export const SignIn = () => {
     error: axiosError,
     fetchData,
     emailError: emailAlreadyExist,
+    loading: isLoading,
   } = axiosResult;
 
   const onSubmit = async (payload: SignInPayload) => {
     axiosOptions.data = payload;
     await fetchData();
   };
-
-  const watchPassword = watch('password');
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -93,15 +94,18 @@ export const SignIn = () => {
             },
           })}
           error={Boolean(
-            errors.email ||
-              (axiosError?.response?.status === 409 &&
-                emailAlreadyExist === true),
+            !isLoading &&
+              (errors.email ||
+                (axiosError?.response?.status === 401 &&
+                  emailAlreadyExist === true)),
           )}
           helperText={
-            errors.email?.message ||
-            (axiosError?.response?.status === 409 && emailAlreadyExist === true
-              ? 'e-mail already exist'
-              : '')
+            !isLoading &&
+            (errors.email?.message ||
+              (axiosError?.response?.status === 401 &&
+                emailAlreadyExist === true))
+              ? 'Invalid e-mail adress or password. Please try again'
+              : ''
           }
           autoComplete="email"
         />
@@ -119,8 +123,20 @@ export const SignIn = () => {
                 'Password should be 5-15 characters long, no spaces allowed',
             },
           })}
-          error={Boolean(errors.password)}
-          helperText={errors.password?.message}
+          error={Boolean(
+            !isLoading &&
+              (errors.password ||
+                (axiosError?.response?.status === 401 &&
+                  emailAlreadyExist === true)),
+          )}
+          helperText={
+            !isLoading &&
+            (errors.password?.message ||
+              (axiosError?.response?.status === 401 &&
+                emailAlreadyExist === true))
+              ? 'Invalid password or adress e-mail. Please try again'
+              : ''
+          }
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -136,22 +152,35 @@ export const SignIn = () => {
           }}
           autoComplete="new-password"
         />
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center' }}>
           <Checkbox
-            checked={checked}
+            checked={isRememberChecked}
             onChange={handleChange}
             inputProps={{ 'aria-label': 'controlled' }}
             style={{ width: 20, marginRight: 10 }}
           />
           <span> Remamber me</span>
-        </div>
+        </div> */}
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isRememberChecked}
+                onChange={handleChange}
+                style={{ color: isRememberChecked ? '#D44D01' : '' }}
+              />
+            }
+            label="Remember me"
+          />
+        </FormGroup>
 
         <Button
           type="submit"
           variant="contained"
+          disabled={isLoading}
           size="large"
           style={{
-            backgroundColor: '#D44D01',
+            backgroundColor: isLoading ? '#CCCCCC' : '#D44D01',
             width: 110,
             height: 35,
             marginTop: 10,
