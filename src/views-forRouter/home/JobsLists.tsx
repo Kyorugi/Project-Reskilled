@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as React from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -53,13 +53,27 @@ export const JobsList = () => {
     url: `${apiUrl}/jobs/public`,
   });
 
-  const { data: jobsData, fetchData: fetchJobsData } = jobsObject;
+  const {
+    data: jobsData,
+    fetchData: fetchJobsData,
+    error: networkError,
+  } = jobsObject;
+
+  // useEffect(() => {
+  //   if (!jobsData) {
+  //     fetchJobsData();
+  //   } else {
+  //     console.error(networkError);
+  //   }
+  // }, [jobsData, fetchJobsData]);
 
   useEffect(() => {
-    if (!jobsData) {
+    if (networkError) {
+      // console.error(networkError);
+    } else if (!jobsData) {
       fetchJobsData();
     }
-  }, [jobsData, fetchJobsData]);
+  }, [jobsData, fetchJobsData, networkError]);
 
   const jobList = jobsObject.data;
 

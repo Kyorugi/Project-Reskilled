@@ -38,7 +38,7 @@ export const useAxios = <T,>({
       }
     } finally {
       setTimeout(() => {
-        if (data || data == null) setLoading(false);
+        if (data == null) setLoading(false);
       }, 1000);
     }
   }, [url, options, data]);
