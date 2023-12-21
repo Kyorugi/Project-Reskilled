@@ -16,7 +16,7 @@ export const Home = () => {
         <Box sx={styles.buttonsContainer}>
           <Button
             component={Link}
-            to={AppRoute.home}
+            to={AppRoute.signIn}
             variant="contained"
             size="large"
             style={{ backgroundColor: '#009688' }}
