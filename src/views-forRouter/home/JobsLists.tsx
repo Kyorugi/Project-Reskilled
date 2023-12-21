@@ -59,19 +59,15 @@ export const JobsList = () => {
     error: networkError,
   } = jobsObject;
 
-  // useEffect(() => {
-  //   if (!jobsData) {
-  //     fetchJobsData();
-  //   } else {
-  //     console.error(networkError);
-  //   }
-  // }, [jobsData, fetchJobsData]);
-
   useEffect(() => {
-    if (networkError) {
-      // console.error(networkError);
-    } else if (!jobsData) {
-      fetchJobsData();
+    try {
+      if (networkError) {
+        // console.error(networkError);
+      } else if (!jobsData) {
+        fetchJobsData();
+      }
+    } catch (error) {
+      console.error(networkError);
     }
   }, [jobsData, fetchJobsData, networkError]);
 
